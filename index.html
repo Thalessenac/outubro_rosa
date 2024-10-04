@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outubro Rosa 2024 - Prevenção e Conscientização</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=SUA_API_KEY&callback=initMap" async defer></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fce4ec;
+            color: #333;
+        }
+        header {
+            background-color: #e91e63;
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+        }
+        nav {
+            background-color: #d81b60;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #ffebee;
+        }
+        section {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .post {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            transition: box-shadow 0.3s;
+        }
+        .post:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .post img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .post h3 {
+            margin: 10px 0;
+        }
+        .post p {
+            line-height: 1.6;
+        }
+        .depoimento {
+            display: none;
+            padding: 15px;
+            text-align: center;
+            font-style: italic;
+        }
+        .depoimento.active {
+            display: block;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #e91e63;
+            color: white;
+        }
+        
+        /* Carrossel */
+        .carousel {
+            position: relative;
+            width: 80%;
+            margin: 50px auto;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .carousel-images {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-images img {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+        }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 50%;
+        }
+        .prev { left: 20px; }
+        .next { right: 20px; }
+        .prev:hover, .next:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .indicators {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        .indicator {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .indicator.active {
+            background-color: white;
+        }
+        .video-container {
+            display: flex;
+            justify-content: center;
+            margin: 50px 0;
+        }
+        .share-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            text-align: center;
+            z-index: 2000;
+        }
+        .share-buttons img {
+            width: 40px;
+            margin: 0 5px;
+            border-radius: 5px; /* Estilo opcional para os ícones */
+            transition: transform 0.3s;
+        }
+        .share-buttons img:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Estilização dos Botões */
+        button {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #d81b60;
+            transform: scale(1.05);
+        }
+
+        .nav-button {
+            background-color: #e91e63;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #d81b60;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Outubro Rosa 2024</h1>
+    <p>Campanha de conscientização para a prevenção e detecção precoce dos cânceres de mama e do colo do útero. Juntos somos mais fortes!</p>
+</header>
+
+<nav>
+    <a href="#depoimentos" class="nav-button">Depoimentos</a>
+    <a href="#doe" class="nav-button">Doe</a>
+    <a href="#eventos" class="nav-button">Eventos</a>
+    <a href="#grafico" class="nav-button">Gráfico</a>
+    <a href="#mapa" class="nav-button">Onde se Cuidar</a>
+</nav>
+
+<div class="video-container" style="max-width: 800px; margin: 50px auto;">
+    <iframe width="100%" height="400" src="https://www.youtube.com/embed/xWUQBe8DzII" frameborder="0" allowfullscreen></iframe>
+</div>
+
+
+<section id="posts">
+    <h2>Últimos Posts</h2>
+    <div class="post">
+        <img src="imagens/post1.jpg" alt="Post 1">
+        <h3>Importância da Prevenção</h3>
+        <p>A detecção precoce é fundamental para o sucesso do tratamento. Conheça as melhores práticas de prevenção e cuidados.</p>
+    </div>
+    <div class="post">
+        <img src="imagens/post2.jpg" alt="Post 2">
+        <h3>Histórias de Superação</h3>
+        <p>Leia histórias inspiradoras de mulheres que enfrentaram o câncer de mama e venceram essa batalha.</p>
+    </div>
+</section>
+
+<section id="depoimentos">
+    <h2>Depoimentos</h2>
+    <div class="carousel-depoimentos">
+        <div class="depoimento active">
+            <img src="imagens/d1.jpg" alt="Ana" class="foto-depoimento">
+            <p>"O autoexame salvou minha vida!" - Ana</p>
+        </div>
+        <div class="depoimento">
+            <img src="imagens/d2.jpg" alt="Dra. Beatriz" class="foto-depoimento">
+            <p>"A prevenção é o melhor caminho. Faça sua mamografia!" - Dra. Beatriz</p>
+        </div>
+        <div class="depoimento">
+            <img src="imagens/d3.jpg" alt="Maria" class="foto-depoimento">
+            <p>"O diagnóstico precoce fez toda a diferença!" - Maria</p>
+        </div>
+    </div>
+    <button class="prev-depoimento">Anterior</button>
+    <button class="next-depoimento">Próximo</button>
+</section>
+
+<section id="carrossel">
+    <h2>Galeria de Imagens</h2>
+    <div class="carousel">
+        <div class="carousel-images">
+            <img src="imagens/1.jpg" alt="Imagem 1">
+            <img src="imagens/2.jpg" alt="Imagem 2">
+            <img src="imagens/3.jpg" alt="Imagem 3">
+            <img src="imagens/4.jpg" alt="Imagem 4">
+            <img src="imagens/5.jpg" alt="Imagem 5">
+        </div>
+        <button class="prev">&#10094;</button>
+        <button class="next">&#10095;</button>
+        <div class="indicators">
+            <span class="indicator active"></span>
+            <span class="indicator"></span>
+            <span class="indicator"></span>
+            <span class="indicator"></span>
+            <span class="indicator"></span>
+        </div>
+    </div>
+</section>
+
+
+<div class="share-buttons">
+    <span style="display: block; margin-bottom: 5px; font-weight: bold;">Compartilhe:</span>
+    <a href="https://api.whatsapp.com/send?text=Confiram%20a%20campanha%20Outubro%20Rosa%20https://exemplo.com" target="_blank">
+        <img src="imagens/whatsapp_logo.png" alt="Compartilhar no WhatsApp">
+    </a>
+    <a href="https://www.instagram.com/" target="_blank">
+        <img src="imagens/instagram_logo.png" alt="Compartilhar no Instagram">
+    </a>
+    <a href="https://www.facebook.com/" target="_blank">
+        <img src="imagens/face_logo.png" alt="Compartilhar no Facebook">
+    </a>
+</div>
+
+<section id="grafico">
+    <h2>Estatísticas</h2>
+    <canvas id="myChart" style="max-width: 600px; margin: auto;"></canvas>
+</section>
+
+<section id="mapa">
+    <h2>Onde se Cuidar</h2>
+    <div id="map" style="width: 100%; height: 400px;"></div>
+</section>
+
+<footer>
+    <p>&copy; 2024 Outubro Rosa. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+    // Script do carrossel de imagens
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-images img');
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+
+        slides.forEach((slide, i) => {
+            slide.style.display = i === index ? 'block' : 'none';
+        });
+
+        const indicators = document.querySelectorAll('.indicator');
+        indicators.forEach((indicator, i) => {
+            indicator.classList.toggle('active', i === index);
+        });
+
+        currentSlide = index;
+    }
+
+    document.querySelector('.prev').addEventListener('click', () => {
+        showSlide(currentSlide - 1);
+    });
+
+    document.querySelector('.next').addEventListener('click', () => {
+        showSlide(currentSlide + 1);
+    });
+
+    document.querySelectorAll('.indicator').forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            showSlide(index);
+        });
+    });
+
+    showSlide(currentSlide);
+
+    // Script do carrossel de depoimentos
+    let currentDepoimento = 0;
+    const depoimentos = document.querySelectorAll('.depoimento');
+
+    function showDepoimento(index) {
+        if (index < 0) index = depoimentos.length - 1;
+        if (index >= depoimentos.length) index = 0;
+
+        depoimentos.forEach((depoimento, i) => {
+            depoimento.classList.toggle('active', i === index);
+        });
+
+        currentDepoimento = index;
+    }
+
+    document.querySelector('.prev-depoimento').addEventListener('click', () => {
+        showDepoimento(currentDepoimento - 1);
+    });
+
+    document.querySelector('.next-depoimento').addEventListener('click', () => {
+        showDepoimento(currentDepoimento + 1);
+    });
+
+    showDepoimento(currentDepoimento);
+
+    // Gráfico de Estatísticas
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Exames', 'Casos Detectados', 'Tratamentos', 'Recuperações'],
+            datasets: [{
+                label: 'Estatísticas de Câncer',
+                data: [1200, 300, 400, 200],
+                backgroundColor: [
+                    'rgba(233, 30, 99, 0.6)',
+                    'rgba(244, 67, 54, 0.6)',
+                    'rgba(255, 152, 0, 0.6)',
+                    'rgba(76, 175, 80, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(233, 30, 99, 1)',
+                    'rgba(244, 67, 54, 1)',
+                    'rgba(255, 152, 0, 1)',
+                    'rgba(76, 175, 80, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Mapa Google
+    function initMap() {
+        const locations = [
+            {lat: -23.5505, lng: -46.6333}, // São Paulo
+            {lat: -22.9068, lng: -43.1729}, // Rio de Janeiro
+            {lat: -30.0346, lng: -51.2177}   // Porto Alegre
+        ];
+        
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 4,
+            center: {lat: -23.5505, lng: -46.6333}
+        });
+
+        locations.forEach(location => {
+            new google.maps.Marker({
+                position: location,
+                map: map
+            });
+        });
+    }
+</script>
+</body>
+</html>
